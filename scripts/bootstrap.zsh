@@ -12,3 +12,4 @@ cd $DOTFILES/scripts
 . ./ngrok.zsh
 . ./postman.zsh
 . ./vscode.zsh
+. ./kitty.zsh

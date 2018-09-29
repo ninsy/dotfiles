@@ -1,0 +1,14 @@
+[core]
+  editor = nano
+
+[alias]
+  co = checkout
+  new = checkout -b
+  d = diff
+  a = add
+  b = branch
+  fix = commit --amend --no-edit --verbose
+  c = commit --verbose
+  b = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
+  la=!git config -l | grep alias | cut -c 7-
+  l=log --pretty=format:%C(yellow)%h\ %ad%Cred%d\ %Creset%s%Cblue\ [%cn] --decorate --date=short
