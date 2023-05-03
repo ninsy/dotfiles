@@ -1,1 +1,15 @@
-/Users/kamil.wojciechowski/Documents/playground/frontend_masters/dev_productivity/setup.yml
+- hosts: localhost
+  become: true
+  pre_tasks:
+    - name: update cache
+      apt:
+        update_cache: true
+      tags:
+        - zsh
+        - node
+        - tmux
+  tasks:
+    - include: tasks/zsh.yml
+    - include: tasks/node.yml
+    - include: tasks/tmux.yml
+    

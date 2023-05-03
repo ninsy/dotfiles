@@ -1,1 +1,18 @@
-/Users/kamil.wojciechowski/Documents/playground/frontend_masters/dev_productivity/tmux-sessionizer
+#!/usr/bin/env bash
+
+ctx_repos=$( \
+find ~/Documents/repos/llamas -mindepth 1 -maxdepth 2 -type d; \
+find ~ ~/Documents ~/Documents/playground ~/Downloads -type d -maxdepth 1 -mindepth 1 \
+)
+
+session=$(echo $ctx_repos | tr ' ' '\n' | fzf)
+session_name=$(basename "$session" | tr . _)
+
+# TODO: check if tmux is running, compare with 'live' version Primeagen has...
+
+if ! tmux has-session -t "$session_name" 2> /dev/null; then
+    tmux new-session -s "$session_name" -c "$session" -d
+fi
+
+tmux switch-client -t "$session_name"
+# TODO: apply a hook that when switching to dir that is a git repo, automatically perform git pull from default branch... or just fetch?
