@@ -1,0 +1,1 @@
+/home/ninsy/.config/nvim/init.vim
