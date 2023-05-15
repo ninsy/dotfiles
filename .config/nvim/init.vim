@@ -26,4 +26,10 @@ nnoremap <C-p> :GFiles<CR>
 nnoremap <leader>pf :Files<CR>
 nnoremap <C-j> :cnext<CR>
 nnoremap <C-k> :cprev<CR>
+vnoremap <leader>p "_dP 
+vnoremap <leader>y "+y
+nnoremap <leader>y "+y
+nnoremap <leader>Y gg"+yG 
 
+vnoremap K :m '<-2<CR>gv=gv
+vnoremap J :m '>+1<CR>gv=gv
