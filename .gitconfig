@@ -1,0 +1,28 @@
+[user]
+	name  = ninsy
+	email = kwojciechowski094@gmail.com
+[core]
+	editor = nvim 
+[alias]
+  co  = checkout
+  new = checkout -b
+  st  = status
+  d   = diff
+  a   = add
+  b   = branch
+  fix = commit --amend --no-edit --verbose
+  c   = commit --verbose
+  b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
+  la  =!git config -l | grep alias | cut -c 7-
+
+[credential]
+  helper = osxkeychain
+# TODO: migrate to nvim too...
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
+[diff]
+  tool = vscode
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
