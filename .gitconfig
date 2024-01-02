@@ -1,8 +1,11 @@
 [user]
 	name  = ninsy
 	email = kwojciechowski094@gmail.com
+
 [core]
-	editor = nvim 
+	editor = nvim
+  pager  = delta 
+
 [alias]
   co  = checkout
   new = checkout -b
@@ -15,14 +18,29 @@
   b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
   la  =!git config -l | grep alias | cut -c 7-
 
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  navigate     = true
+  light        = false
+  side-by-side = true
+  line-numbers = true
+
 [credential]
   helper = osxkeychain
+
 # TODO: migrate to nvim too...
 [merge]
   tool = vscode
+  conflictstyle = diff3  
+
 [mergetool "vscode"]
   cmd = code --wait $MERGED
+
 [diff]
   tool = vscode
+  colorMoved = default
+
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
