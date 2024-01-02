@@ -6,10 +6,12 @@ export DOTFILES=${DOTFILES:="$HOME/.dotfiles"}
 
 cd $DOTFILES/scripts
 
-. ./node.zsh
-. ./golang.zsh
-. ./rust.zsh
-. ./ngrok.zsh
-. ./postman.zsh
-. ./vscode.zsh
-. ./kitty.zsh
+source ./aws.zsh
+source ./node.zsh
+source ./golang.zsh
+source ./rust.zsh
+source ./ngrok.zsh
+source ./vscode.zsh
+source ./terraform.zsh
+source ./utils.zsh
+source ./vscode.zsh

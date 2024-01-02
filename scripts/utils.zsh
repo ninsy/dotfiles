@@ -45,3 +45,7 @@ vault_token() {
   readonly service=${1:?"Vault service must be specified."}
   dazn vault login -s $1 && vault token lookup | awk '$1 ~ /^id/' | awk '{print $2}'
 }
+
+r () {
+  cd "$(git rev-parse --show-toplevel 2>/dev/null)"
+}
