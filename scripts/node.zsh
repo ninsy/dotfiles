@@ -3,7 +3,6 @@ _exists() {
   command -v $1 >/dev/null 2>&1
 }
 
-
 function setup_npm {
   if ! _exists "npm"; then
     echo "requires npm to be installed, exiting..."
