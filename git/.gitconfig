@@ -17,6 +17,8 @@
   c   = commit --verbose
   b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
   la  =!git config -l | grep alias | cut -c 7-
+  # TODO: fix it lol
+  month-commit = "!f() { commit_from_month; }; f"
 
 [interactive]
   diffFilter = delta --color-only
