@@ -12,6 +12,7 @@ cask 'zoom'
 
 brew 'bat'
 brew 'bitwarden-cli'
+brew 'cdktf'
 brew 'cmake'
 brew 'coreutils'
 brew 'fzf'
