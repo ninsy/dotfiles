@@ -47,6 +47,14 @@ _exists() {
   command -v $1 >/dev/null 2>&1
 }
 
+function commit_from_month() {
+    # assumes it runs on BSD
+    # TODO: set custom month as reference
+    curr_month_first=$(date -v1d +%d-%m-%Y)
+    curr_month_last=$(date -v1d -v+1m -v-1d +%d-%m-%Y)
+    git log --after=$curr_month_first --until=$curr_month_last --author=$(git config user.email) --pretty=format:"[%h]%ad : %s"
+}
+
 commit_hash() {
   git rev-parse --short=10 HEAD
 }
@@ -126,21 +134,33 @@ fi
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
+# TODO: those were installed via homebrew...
+# TODO: used '$HOMEBREW_PREFIX/share..' before, but didnt work
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# TODO: Split it up to be more manageable...
 plugins=(
+    brew
     git
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    zsh-history-substring-search
+    # zsh-autosuggestions
+    # zsh-syntax-highlighting
+    # zsh-history-substring-search
+    # TODO: git clone'd stuff goes here...
+    you-should-use
+    zsh-bat
     fzf
     aws
     node
     npm
     vscode
+    zig-shell-completions
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -170,6 +190,9 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+source $HOME/.local/bin/zsh-scripts.sh
+source $HOME/.zsh_aliases
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -231,3 +254,8 @@ source $ZPLUG_HOME/init.zsh
 # TODO: seems it is not loaded properly...
 zplug "jeffreytse/zsh-vi-mode"
 
+
+# TODO: fetch if not present
+# git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
+# git clone https://github.com/fdellwing/zsh-bat.git $ZSH_CUSTOM/plugins/zsh-bat
