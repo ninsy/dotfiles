@@ -4,6 +4,50 @@ _exists() {
   command -v $1 >/dev/null 2>&1
 }
 
+function release_node_rc {
+  if ! _exists "npm"; then
+    echo "requires npm to be installed, exiting..."
+    return 1
+  fi
+
+  if ! _exists "gh"; then
+    echo "requires github cli to be installed, exiting..."
+    return 1
+  fi
+
+  if [[ ! -f $PWD/package.json ]]; then
+    echo "expected to run within node.js project with package.json file, exiting..."
+    return 1
+  fi
+
+  release_file="pre-release.yml"
+  release_file_path=".github/workflows/$release_file"
+  if [[ ! -f "$PWD/$release_file_path" ]]; then
+    echo "cannot find '$release_file_path' file, exiting..."
+    return 1
+  fi
+
+  gh auth status
+
+  current_version=$(cat package.json | grep "version" | head -1 | awk -F: '{print $2}' | sed 's/[ ",]//g')
+
+  if [[ "$current_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    expected_rc=$(echo "$current_version-rc-1")
+  elif [[ "$current_version" =~ ^.*\-rc\-[0-9]+$ ]]; then
+    version_without_rc=$(echo $current_version | sed -nE "s/^(.*)\-rc\-.*$/\1/p")
+    current_rc=$(echo $current_version | sed -nE "s/^.*\-rc\-([0-9]+)$/\1/p")
+    bumped=$((current_rc + 1))
+
+    expected_rc=$(echo "$version_without_rc-rc-$bumped")
+  fi
+
+  branch=$(git rev-parse --abbrev-ref HEAD)
+
+  npm version $expected_rc
+  git push --no-verify --follow-tags origin $branch 
+  gh workflow run --ref $branch $release_file && echo "Release of RC scheduled sucessfully"
+}
+
 function setup_npm {
   if ! _exists "npm"; then
     echo "requires npm to be installed, exiting..."
