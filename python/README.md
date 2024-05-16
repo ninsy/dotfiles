@@ -1,0 +1,1 @@
+File `pipx-short.txt` generated via: `pipx list --short >> pipx-short.txt`, used version: `1.5.0`
