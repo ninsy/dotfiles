@@ -1,7 +1,34 @@
 #!/bin/zsh
 
+# TODO: split furhter - aws stuff, etc...
+
 _exists() {
   command -v $1 >/dev/null 2>&1
+}
+
+function docker_killall {
+  docker kill $(docker ps -q)
+}
+
+function set_env_file_aws {
+  # eval "$(aws configure export-credentials --profile be-trust-dev-secrets --format env)"
+  
+  set -as
+  
+  rm -rf ~/.aws/cli/cache/*
+  aws sso login --sso-session DAZN
+  
+  # in order to populate ~/.aws/cli/cache ...
+  aws secretsmanager describe-secret --profile be-trust-dev-secrets --secret-id $EXISTING_SECRET_ID >/dev/null
+
+  AWS_ACCESS_KEY_ID=$(cat ~/.aws/cli/cache/*.json | jq '.Credentials.AccessKeyId' --raw-output)
+  AWS_SECRET_ACCESS_KEY=$(cat ~/.aws/cli/cache/*.json | jq '.Credentials.SecretAccessKey' --raw-output)
+  AWS_SESSION_TOKEN=$(cat ~/.aws/cli/cache/*.json | jq '.Credentials.SessionToken' --raw-output)
+  AWS_REGION=eu-central-1
+
+  echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+  echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+  echo "export AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}"
 }
 
 function release_node_rc {
@@ -48,22 +75,67 @@ function release_node_rc {
   gh workflow run --ref $branch $release_file && echo "Release of RC scheduled sucessfully"
 }
 
+function usage_setup_npm {
+    echo "Usage: $0 [-a] [-r <npm_registry>]"
+    echo "  -a    Reauthenticate to JFrog"
+    echo "  -r    Registry to authenticate to, by default taken from \$NPM_REGISTRY env var"
+    exit 1
+}
+
+# TODO: modify registry? read it from .env/env variable set at $HOME if not passed via argument?
 function setup_npm {
+
   if ! _exists "npm"; then
     echo "requires npm to be installed, exiting..."
     return 1
   fi
 
+  REAUTH=false
+  REGISTRY="${NPM_REGISTRY:-}"
+
+  while getopts ":a" opt; do
+    case ${opt} in
+      a )
+        REAUTH=true
+        ;;
+      r )
+        REGISTRY=$OPTARG
+        ;;
+      \? )
+        echo "Invalid option: -$OPTARG" 1>&2
+        usage_setup_npm
+        ;;
+      : )
+        echo "Invalid option: $OPTARG requires an argument" 1>&2
+        usage_setup_npm
+        ;;
+    esac
+  done
+  
+  if [ -z "$REGISTRY" ]; then
+    echo "\$REGISTRY is not set. Please provide a command with -r option or set NPM_REGISTRY environment variable."
+    exit 1
+  fi
+
+  if [ "$REAUTH" = false ]; then
+    echo "Setting \$NODE_AUTH_TOKEN to value from '~/.npmrc'..."
+    token_val=$(grep "//$NPM_REGISTRY:_authToken=" ~/.npmrc | awk -F "=" '{print $2}')  
+    export NODE_AUTH_TOKEN=$(echo $token_val)
+    export NPM_TOKEN=$(echo $token_val)
+    return 0
+  fi
+
   unset NPM_TOKEN
   unset NODE_AUTH_TOKEN
 
-  rm $HOME/.npmrc
+  /bin/rm -f $HOME/.npmrc
 
-  npm login --registry https://npm.daznplatform.com/
+  npm login --registry https://$NPM_REGISTRY
 
-  token_val=$(grep "//npm.daznplatform.com/:_authToken=" ~/.npmrc | awk -F "=" '{print $2}')
+  token_val=$(grep "//$NPM_REGISTRY:_authToken=" ~/.npmrc | awk -F "=" '{print $2}')
 
-  npm config set @dazn:registry https://npm.daznplatform.com/
+  # TODO: NPM_NAMESPACE?...
+  npm config set @dazn:registry https://$NPM_REGISTRY
 
   export NODE_AUTH_TOKEN=$(echo $token_val)
   export NPM_TOKEN=$(echo $token_val)
