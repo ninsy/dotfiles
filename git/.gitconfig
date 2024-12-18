@@ -6,6 +6,9 @@
 	editor = nvim
   pager  = delta 
 
+[push]
+	autoSetupRemote = always
+
 [alias]
   co  = checkout
   new = checkout -b
@@ -17,7 +20,7 @@
   c   = commit --verbose
   b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
   la  =!git config -l | grep alias | cut -c 7-
-  # TODO: fix it lol
+  # TODO: to be fixed?
   month-commit = "!f() { commit_from_month; }; f"
 
 [interactive]
@@ -46,3 +49,8 @@
 
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
+
+# TODO: change ff?
+[pull]
+	rebase = true
+	ff = only
