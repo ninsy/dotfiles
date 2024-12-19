@@ -10,6 +10,20 @@
 	autoSetupRemote = true
 
 [alias]
+  aliases = !git config --get-regexp '^alias\\.'
+  # TODO: manage all worktrees within same vscode session for given project?
+  # TODO: prompt/completion to list available branches?
+  worktree-add = "!f() { \
+    default_branch=$(git config --get init.defaultBranch) ;\
+    branch=${1:-$(git rev-parse --abbrev-ref HEAD)} ;\
+    repo_path=$(git rev-parse --show-toplevel) ;\
+    repo=$(basename $repo_path) ; \
+    worktree_path=\"$HOME/git-worktrees/$repo-$branch\"  ; \
+    git -C $repo_path checkout $default_branch; \
+    mkdir -p $HOME/git-worktrees && \
+    git worktree add $worktree_path $branch ;\
+    tmux new-window -n \"worktree@$branch\" -c \"$worktree_path\"; \
+  }; f"
   co  = checkout
   new = checkout -b
   st  = status
