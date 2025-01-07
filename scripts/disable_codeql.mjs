@@ -2,6 +2,9 @@
 
 import { $, fs, cd, syncProcessCwd } from 'zx';
 
+await exists('git');
+await exists('gh');
+
 const disabledRepos = [];
 const allowedOwners = [];
 const choreBranchName = 'chore/disable-codeql'
@@ -77,5 +80,16 @@ for (let repo of dirs) {
     cd(repoRoot)
 }
 
+async function exists(execName) {
+    const err = new Error(`Exec '${execName}' should be installed`); 
+    try {
+        const result = await $`command -v ${execName} >/dev/null 2>&1`
+        if (result.exitCode !== 0) throw err;
+    } catch (e) {
+        throw err;
+    }
+    return true;
+}
+
 console.log('Created PRs:');
-console.log(prList.join('\n'));
+console.log(prList.join('\n'))
