@@ -32,3 +32,5 @@ echo "Installing golang plugin"
 brew install coreutils curl
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 echo -e "\n. ~/.asdf/plugins/golang/set-env.zsh" >> ${ZDOTDIR:-~}/.zshrc
+
+# TODO: python, how does virtualenv/python dep installation works?
