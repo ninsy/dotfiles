@@ -208,12 +208,9 @@ alias ls="ls -alht"
 alias ls-dir="ls -alht --color=always | grep ^d"
 alias df="df -h"
 alias mkdir="mkdir -pv"
+alias kc="kubectl"
+alias dc="docker compose"
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-eval "$(goenv init -)"
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
 export PATH=/usr/local/bin:$PATH
