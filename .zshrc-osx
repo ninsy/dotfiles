@@ -273,3 +273,7 @@ export LC_ALL=en_US.UTF-8
 
 # asdf section - https://asdf-vm.com/guide/getting-started.html
 # TODO: that's dependent on platform/install method
+
+# k8s/kubectl section
+source <(kubectl completion zsh)  # set up autocomplete in zsh into the current shell
+echo '[[ $commands[kubectl] ]] && source <(kubectl completion zsh)' >> ~/.zshrc # add autocomplete permanently to your zsh shell
