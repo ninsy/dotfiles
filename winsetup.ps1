@@ -9,17 +9,28 @@ if ($ahkInstalled) {
     winget install --id=AutoHotkey.AutoHotkey --accept-source-agreements --accept-package-agreements
 }
 
-$ahkScriptPath = "\\wsl.localhost\Ubuntu-20.04\home\ninsy\Documents\Coding\dotfiles\autohotkey.ahk"
-$startup = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
-$ahkStartupPath = "$startup\autohotkey.lnk"
+$sourceAhkPath = "\\wsl.localhost\Ubuntu-20.04\home\ninsy\Documents\Coding\dotfiles\autohotkey.ahk"
+$targetAhkPath = "$env:USERPROFILE\autohotkey.ahk"
 
-if (Test-Path $ahkStartupPath) {
+if (Test-Path $sourceAhkPath) {
+    Write-Host "copying AHK script to win user folder..."
+    Copy-Item $sourceAhkPath $targetAhkPath -Force
+} else {
+    Write-Host "source script not found at: $sourceAhkPath"
+    exit 1
+}
+
+$startup = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
+$ahkLinkStartupPath = "$startup\autohotkey.lnk"
+
+if (Test-Path $ahkLinkStartupPath) {
     Write-Host "ahk script already at startup folder, skipping..."
 } else {
-    Write-Host "copying ahk script to startup folder..."
+    Write-Host "creating shortcut to ahk script in startup folder..."
     $WshShell = New-Object -ComObject WScript.Shell
-    $s = $WshShell.CreateShortcut($ahkStartupPath)
-    $s.TargetPath = $ahkScriptPath
-    $s.WorkingDirectory = $PSScriptRoot
+    $s = $WshShell.CreateShortcut($ahkLinkStartupPath)
+    $s.TargetPath = $targetAhkPath
+    $s.WorkingDirectory = [System.IO.Path]::GetDirectoryName($targetAhkPath)
     $s.Save()
+    Write-Host "shortcut created: $ahkLinkStartupPath"
 }
