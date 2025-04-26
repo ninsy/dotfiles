@@ -3,12 +3,13 @@
 import sys
 import csv
 import requests
-import argparse
-from datetime import datetime, timedelta
+import shutil
+from argparse import Namespace, ArgumentParser
+from datetime import datetime, timedelta, timezone
 from requests.exceptions import RequestException
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 
 NBP_API_URL_TEMPLATE = 'http://api.nbp.pl/api/exchangerates/rates/a/{curr}/{date}'
 NPB_API_DATE_FORMAT = "%Y-%m-%d"
@@ -20,7 +21,7 @@ if (major == 3 and minor < 7):
     print(f"using py version: {major}.{minor} that has unordered dicts (no guarantee when operating on csv rows in reader > writer steps), exiting...")
     exit(1)
 
-parser = argparse.ArgumentParser()
+parser = ArgumentParser()
 parser.add_argument("-c", "--csv-file", help="File in CSV format with transaction to processs")
 parser.add_argument("-d", "--date-column", help="Name of column in CSV file that contains data");
 parser.add_argument("-r", "--rate-column", help="Name of column in CSV file that contains foreign currency rate to be converted");
@@ -47,31 +48,45 @@ class Conversion:
 
 
 def process_csv():
-    interests_to_check = []
-
-    with open(args.csv_file, newline="") as csvFile:
-        reader = csv.DictReader(csvFile)
-        start, end = datetime(args.year, 1, 1, 0, 0), datetime(args.year, 12, 31, 23, 59)
+    with open(args.csv_file, newline="") as csv_file:
         print("Processing CSV rows with reader...")
-        for row in reader:
-            row_date = row[args.date_column]
-            try:
-                date = datetime.strptime(row_date, args.source_date_format)
-            except ValueError as e:
-                print(f"Parsing '{row_date}' with format {args.sorce_date_format} failed, review '--source-date-format' cli args, exiting...")
-                exit(1)
-
-            if start > date or date > end:
-                print(f"Date '{date}' not within bounds of year '{args.year}', skipping...")
-                # continue
-
-            row_col = args.rate_column
+        interests = csv_reader_process_rows(csv_file, args)
         
-            if (len(row[row_col]) != 0):
-                interests_to_check.append(Conversion(date=date, src_value=row[row_col], currency=args.currency))
-
     print("Processing rates/dates...")
-    for to_check in interests_to_check:
+    converted_interests = nbp_api_process(interests, args)
+
+    # NOTE: handle not passed as we operate on copied file... initially was different idea, hence left as it is. add flag in the future to enable/disable copying?
+    print("Writing rows with converted values...")
+    csv_writer_process_rows(converted_interests, args)
+
+
+def csv_reader_process_rows(csv_file_handle, args: Namespace) -> List[Conversion]:
+    interests_to_check: List[Conversion] = []
+
+    reader = csv.DictReader(csv_file_handle)
+    start, end = datetime(args.year, 1, 1, 0, 0), datetime(args.year, 12, 31, 23, 59)
+    for row in reader:
+        row_date = row[args.date_column]
+        try:
+            date = datetime.strptime(row_date, args.source_date_format)
+        except ValueError as e:
+            print(f"Parsing '{row_date}' with format {args.sorce_date_format} failed, review '--source-date-format' cli args, exiting...")
+            exit(1)
+
+        if start > date or date > end:
+            print(f"Date '{date}' not within bounds of year '{args.year}', skipping...")
+            # continue
+
+        row_col = args.rate_column
+    
+        if (len(row[row_col]) != 0):
+            interests_to_check.append(Conversion(date=date, src_value=row[row_col], currency=args.currency))
+
+    return interests_to_check
+
+
+def nbp_api_process(convs: List[Conversion], args: Namespace) -> List[Conversion]:
+    for to_check in convs:
         url = to_check.api_req_url()
         try:
             r = fetch_closest_possible_rate(to_check)
@@ -96,9 +111,22 @@ def process_csv():
         if data is None:
             continue
 
-        # TODO: what else present there?
+        # TODO: what else present?
+        # TODO: mutate convs with returned rates, return
         print(data['rates'][0])
         # tax = (amount * tax_rate).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    return convs
+
+
+def csv_writer_process_rows(convs: List[Conversion], args: Namespace):
+    now_str = datetime.strftime(datetime.now(timezone.utc), "%Y-%m-%d")
+    copied_csv_filepath = f"{args.csv_file}-{now_str}.csv"
+    shutil.copy2(args.csv_file, copied_csv_filepath)
+
+    with open(copied_csv_filepath, newline="") as csv_file:
+        # TODO! 'fieldnames' to be extracted from initial csv file! in some previous steps?
+        # writer = csv.DictWriter(csv_file)
+        pass
 
 
 def fetch_closest_possible_rate(c: Conversion, retry_count=5):
