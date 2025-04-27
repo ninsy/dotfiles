@@ -7,9 +7,9 @@ import shutil
 from argparse import Namespace, ArgumentParser
 from datetime import datetime, timedelta, timezone
 from requests.exceptions import RequestException
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Optional, List
+from typing import Optional, List, Union
 
 NBP_API_URL_TEMPLATE = 'http://api.nbp.pl/api/exchangerates/rates/a/{curr}/{date}'
 NPB_API_DATE_FORMAT = "%Y-%m-%d"
@@ -36,8 +36,26 @@ class Conversion:
     date: datetime
     # NOTE: assume that always translated to PLN
     currency: str
-    src_value: Decimal
+    _src_value: Decimal = field(init=False, repr=False)
     rate: Optional[Decimal] = None # filled after quering nbp api   
+
+    def __init__(self, date: datetime, src_value: Union[str, Decimal], currency: str):
+        self.date = date
+        self.currency = currency
+        self.src_value = src_value
+
+    @property
+    def src_value(self) -> Decimal:
+        return self._src_value
+
+    @src_value.setter
+    def src_value(self, value: Union[str, Decimal]):
+        if isinstance(value, str):
+            self._src_value = Decimal(value)
+        elif isinstance(value, Decimal):
+            self._src_value = value
+        else:
+            raise TypeError(f"src_value must be Decimal/str, got {type(value)}")
 
     def value(self) -> Decimal:
         return self.rate * self.src_value 
@@ -111,15 +129,18 @@ def nbp_api_process(convs: List[Conversion], args: Namespace) -> List[Conversion
         if data is None:
             continue
 
-        # TODO: what else present?
-        # TODO: mutate convs with returned rates, return
-        print(data['rates'][0])
+        api_result_value = data['rates'][0]['mid']
+        print(f"\t\tValue at api: {api_result_value}")
+        to_check.rate = Decimal(str(api_result_value))
         # tax = (amount * tax_rate).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
     return convs
 
 
 def csv_writer_process_rows(convs: List[Conversion], args: Namespace):
-    now_str = datetime.strftime(datetime.now(timezone.utc), "%Y-%m-%d")
+    for conv in convs:
+        print(conv.value())
+    
+    now_str = datetime.strftime(datetime.now(timezone.utc), "%Y-%m-%d_%H-%m-%s")
     copied_csv_filepath = f"{args.csv_file}-{now_str}.csv"
     shutil.copy2(args.csv_file, copied_csv_filepath)
 
@@ -142,7 +163,7 @@ def fetch_closest_possible_rate(c: Conversion, retry_count=5):
     except RequestException as e:
         # TODO: preserve e.message somehow?...
         prev_date = c.date - timedelta(days=1)
-        prev_date_conversion = Conversion(date=prev_date, currency=c.currency, rate=c.rate, src_value=c.src_value)
+        prev_date_conversion = Conversion(date=prev_date, currency=c.currency, src_value=c.src_value)
         return fetch_closest_possible_rate(prev_date_conversion, retry_count-1)
 
 
