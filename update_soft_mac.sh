@@ -13,6 +13,3 @@ brew upgrade
 
 echo -e "\tUpgrading brew cask installs"
 brew upgrade --cask
-
-echo -e "Updating asdf"
-asdf plugin-update --all

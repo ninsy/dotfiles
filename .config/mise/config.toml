@@ -1,0 +1,11 @@
+[tools]
+java = "openjdk-11.0.2"
+node = "22"
+terraform = "1.6.1"
+
+[tasks."terraform:check"]
+description = "Checks the Terraform files"
+depends = ["terraform:format", "terraform:validate"]
+
+[settings]
+idiomatic_version_file_enable_tools = ["node"]

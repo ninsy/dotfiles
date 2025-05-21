@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: replace with mise-en-place...
 JAVA_VER="openjdk-23"
 NODE_VER="lts"
 
