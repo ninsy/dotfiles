@@ -1,0 +1,24 @@
+{
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.iconTheme": "vscode-icons",
+    "vsicons.dontShowNewVersionMessage": true,
+    "settingsSync.ignoredExtensions": [
+
+    ],
+    "editor.parameterHints.enabled": true,
+    "editor.snippetSuggestions": "bottom",
+    "workbench.settings.openDefaultKeybindings": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "workbench.colorTheme": "Gruvbox Dark Hard",
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    },
+    "zig.initialSetupDone": true,
+    "go.toolsManagement.autoUpdate": true
+}
