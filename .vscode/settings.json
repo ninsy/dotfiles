@@ -1,24 +1,26 @@
 {
-    "[python]": {
-        "editor.formatOnType": true
-    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.parameterHints.enabled": true,
+    "editor.snippetSuggestions": "bottom",
+    "editor.lineNumbers": "relative",
+    "go.toolsManagement.autoUpdate": true,
     "security.workspace.trust.untrustedFiles": "open",
-    "workbench.iconTheme": "vscode-icons",
-    "vsicons.dontShowNewVersionMessage": true,
     "settingsSync.ignoredExtensions": [
 
     ],
-    "editor.parameterHints.enabled": true,
-    "editor.snippetSuggestions": "bottom",
+    "vim.smartRelativeLine": true,
+    "vsicons.dontShowNewVersionMessage": true,
+    "workbench.colorTheme": "Gruvbox Dark Hard",
+    "workbench.iconTheme": "vscode-icons",
     "workbench.settings.openDefaultKeybindings": true,
+    "zig.initialSetupDone": true,
+    "[python]": {
+        "editor.formatOnType": true
+    },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "workbench.colorTheme": "Gruvbox Dark Hard",
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
     },
-    "zig.initialSetupDone": true,
-    "go.toolsManagement.autoUpdate": true
 }
