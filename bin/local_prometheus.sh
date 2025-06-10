@@ -16,6 +16,7 @@ scrape_configs:
       - targets: ['${target}']
 EOL
 
+# TODO: healthcheck for http://localhost:9090/targets, so it fetches properly?
 docker run --rm --name my-prometheus \
   --add-host=host.docker.internal:host-gateway \
   -p $prom_port:$prom_port \
