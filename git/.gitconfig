@@ -29,13 +29,30 @@
   st  = status
   d   = diff
   a   = add
+  fzf-add =!git ls-files -m | fzf -m --preview='git diff --color=always {}' --preview-window=right:60% | xargs git add
+  fa = fzf-add
+  fzf-unstage =!git diff --name-only --staged | fzf -m --preview='git diff --color=always {}' --preview-window=right:60% | xargs git restore --staged
+  fu = fzf-unstage
   b   = branch
   fix = commit --amend --no-edit --verbose
   c   = commit --verbose
-  b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
+  b   =!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
   la  =!git config -l | grep alias | cut -c 7-
-  # TODO: fix? 
-  month-commit = "!f() { commit_from_month; }; f"
+  month-commit = "!f() { \
+    year=\"${1:-$(gdate +%Y)}\"; \
+    month=\"${2:-$(gdate +%m)}\"; \
+    since=$(gdate -d \"$year-$month-1\" +%Y-%m-%d); \
+    until=$(gdate -d \"$year-$month-1 +1 month -1 day\" +%Y-%m-%d); \
+    git log --since=\"$since\" --until=\"$until\" --author=\"$(git config user.email)\" --pretty=format:'[%h]%ad : %s'; \
+  }; f"
+  mc = month-commit
+  pull-default = "!f() { \
+    git stash -u; \
+    default=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'); \
+    git pull origin $default; \
+    git stash pop; \
+  }; f"
+  pd = pull-default
 
 # git rev-parse --abbrev-ref HEAD
 
