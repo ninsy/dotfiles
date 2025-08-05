@@ -1,0 +1,8 @@
+alias ls="ls -alht"
+alias ls-dir="ls -alht --color=always | grep ^d"
+alias df="df -h"
+alias mkdir="mkdir -pv"
+alias kc="kubectl"
+alias dc="docker compose"
+
+alias cat="/bin/cat"

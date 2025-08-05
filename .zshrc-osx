@@ -47,26 +47,14 @@ _exists() {
   command -v $1 >/dev/null 2>&1
 }
 
-function commit_from_month() {
-    # assumes it runs on BSD
-    # TODO: set custom month as reference
-    curr_month_first=$(date -v1d +%d-%m-%Y)
-    curr_month_last=$(date -v1d -v+1m -v-1d +%d-%m-%Y)
-    git log --after=$curr_month_first --until=$curr_month_last --author=$(git config user.email) --pretty=format:"[%h]%ad : %s"
-}
-
 commit_hash() {
   git rev-parse --short=10 HEAD
 }
 
-default_branch() {
-  git remote show origin | sed -n '/HEAD branch/s/.*: //p'
+# TODO: clean it up...
+r () {
+    cd "$(git rev-parse --show-toplevel 2>/dev/null)"
 }
-
-pull_default() {
-  git pull origin $(default_branch)
-}
-alias pd='pull_default'
 
 vault_token() {
   readonly service=${1:?"Vault service must be specified."}
@@ -154,7 +142,7 @@ plugins=(
     # zsh-history-substring-search
     # TODO: git clone'd stuff goes here...
     you-should-use
-    zsh-bat
+    # zsh-bat
     fzf
     aws
     node
@@ -191,34 +179,25 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source $HOME/.local/bin/zsh-scripts.sh
+export PAGER=less
+
+export SCRIPTS_FILE=$HOME/.local/bin/zsh-scripts.sh
+source $SCRIPTS_FILE
 source $HOME/.zsh_aliases
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# export VAULT_ADDR='https://this.vault.indazn.com'
-export VAULT_ADDR=https://this.vault.dazn-stage.com
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagacedw
 
-alias ls="ls -alht"
-alias ls-dir="ls -alht --color=always | grep ^d"
-alias df="df -h"
-alias mkdir="mkdir -pv"
-alias kc="kubectl"
-alias dc="docker compose"
+export PATH="$HOME":$PATH
+export PATH=$HOME/.local/bin:$PATH
+export PATH=/usr/local/bin:$PATH
 
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
 export PATH=/usr/local/bin:$PATH
 
 bindkey -s ^f "tmux-sessionizer\n"
-
 bindkey "^b" beginning-of-line
-
 
 # TODO: fix!
 bindkey "^[f" forward-word
@@ -241,9 +220,7 @@ source $ZPLUG_HOME/init.zsh
 #TODO: https://pragmaticpineapple.com/four-useful-fzf-tricks-for-your-terminal/ - fuzzy change dir with alt-c
 #TODO: todolisty z tmuxem!!! sprawdz config
 
-#TODO: some universal tool to manage keybindings?... both linux + mac?
 # TODO: mac: remap ~ with ``
-# TODO: fzf ** replace with ~~
 # TODO: mc? (midnight commander)
 
 # TODO: seems it is not loaded properly...
@@ -251,6 +228,7 @@ zplug "jeffreytse/zsh-vi-mode"
 
 # TODO: is zplug the valid option?
 # TODO: plugin for mise
+eval "$(mise activate zsh)"
 # ohmyzsh/ohmyzsh
 
 # TODO: fetch if not present
@@ -276,6 +254,7 @@ setopt APPEND_HISTORY        # append to history file (Default)
 setopt HIST_NO_STORE         # Don't store history commands
 setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line being added to the history.
 
+source <(fzf --zsh)
 # TODO: create it and add into dotfiles
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # ~~<TAB>
@@ -288,3 +267,10 @@ export LC_ALL=en_US.UTF-8
 # k8s/kubectl section
 source <(kubectl completion zsh)  # set up autocomplete in zsh into the current shell
 echo '[[ $commands[kubectl] ]] && source <(kubectl completion zsh)' >> ~/.zshrc # add autocomplete permanently to your zsh shell
+
+eval "devtui completion zsh"
+
+echo
+echo "Remember you've set 'SCRIPTS_FILE' that points to file with zsh scripts, edit it via \"code \$SCRIPTS_FILE\"".
+echo "Also at: \$HOME/.local/bin/tf-destroy.sh"
+echo "Also at: \$HOME/.local/bin/get-config-versions.sh"
