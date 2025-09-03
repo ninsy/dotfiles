@@ -9,6 +9,12 @@
 [push]
   autoSetupRemote = true
 
+# TODO: change? 
+[pull]
+  rebase = true
+  ff = only
+
+# TODO: ogarnij to z tym pull-defaultem, zeby aktualnego brancha tez zreasowalo.. teraz jest info o diverged: hint: Diverging branches can't be fast-forwarded, you need to either: git merge --no-ff or git rebase
 [alias]
   aliases = !git config --get-regexp '^alias\\.'
   # TODO: manage all worktrees within same vscode session for given project?
@@ -33,10 +39,12 @@
   fa = fzf-add
   fzf-unstage =!git diff --name-only --staged | fzf -m --preview='git diff --color=always {}' --preview-window=right:60% | xargs git restore --staged
   fu = fzf-unstage
+  fzf-show = "!~/.git-scripts/fzf-show.sh"
+  fs = fzf-show
   b   = branch
   fix = commit --amend --no-edit --verbose
   c   = commit --verbose
-  b   =!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
+  b   = b=!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
   la  =!git config -l | grep alias | cut -c 7-
   month-commit = "!f() { \
     year=\"${1:-$(gdate +%Y)}\"; \
@@ -83,8 +91,3 @@
 
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
-
-# TODO: change? 
-[pull]
-  rebase = true
-  ff = only
