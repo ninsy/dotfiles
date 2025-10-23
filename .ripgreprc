@@ -1,0 +1,2 @@
+--hidden
+--glob !node_modules/**

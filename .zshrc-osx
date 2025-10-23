@@ -61,6 +61,11 @@ vault_token() {
   dazn vault login -s $1 && vault token lookup | awk '$1 ~ /^id/' | awk '{print $2}'
 }
 
+function llamas_repos() {
+  # TODO: topics passed as flags? org as arg?
+  gh api --paginate "search/repositories?q=org:getndazn+topic:llamas+topic:katowice+archived:false&per_page=100" | jq '.items[] | { full_name, html_url, topics, default_branch }'
+}
+
 if _exists trash; then
   alias rm='trash'
 else
@@ -235,7 +240,6 @@ eval "$(mise activate zsh)"
 # git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
 # git clone https://github.com/fdellwing/zsh-bat.git $ZSH_CUSTOM/plugins/zsh-ba
-
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000000
 export SAVEHIST=10000000
@@ -254,6 +258,9 @@ setopt APPEND_HISTORY        # append to history file (Default)
 setopt HIST_NO_STORE         # Don't store history commands
 setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line being added to the history.
 
+# TODO: separate file for envs?
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
+
 source <(fzf --zsh)
 # TODO: create it and add into dotfiles
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -262,13 +269,22 @@ export FZF_COMPLETION_TRIGGER='~~'
 export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
+# TODO: dokoncz to...
+LAST_KNOWN_FZF_GIT_HASH="5002c0ec97b8bbfa0f87eaa3940db64f32235a0800606a28498230884adb4927"
+FZF_GIT_REMOTE="https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
+TMP_FZF_GIP="/tmp/fzf-git.sh"
+# if ! curl -sSfL "$FZF_GIT_REMOTE" -o "$TMP_FZF_GIP"; then
+#     rm -f "$tmp_file"
+#     return 2
+# fi
+
 export LC_ALL=en_US.UTF-8
 
 # k8s/kubectl section
 source <(kubectl completion zsh)  # set up autocomplete in zsh into the current shell
 echo '[[ $commands[kubectl] ]] && source <(kubectl completion zsh)' >> ~/.zshrc # add autocomplete permanently to your zsh shell
 
-eval "devtui completion zsh"
+eval "$(devtui completion zsh)"
 
 echo
 echo "Remember you've set 'SCRIPTS_FILE' that points to file with zsh scripts, edit it via \"code \$SCRIPTS_FILE\"".

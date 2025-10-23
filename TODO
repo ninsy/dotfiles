@@ -1,0 +1,2 @@
+- run shellcheck on pre-commit?
+- commit rclone config but without possible token?... token as env var?
