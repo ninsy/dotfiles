@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+# TODO: into .git-scripts, compare with what's currently in .gitconfig...
 function commit_from_month() {
     # assumes it runs on BSD
     # TODO: set custom month as reference
