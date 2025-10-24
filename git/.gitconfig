@@ -14,7 +14,7 @@
   rebase = true
   ff = only
 
-# TODO: ogarnij to z tym pull-defaultem, zeby aktualnego brancha tez zreasowalo.. teraz jest info o diverged: hint: Diverging branches can't be fast-forwarded, you need to either: git merge --no-ff or git rebase
+# TODO: change path of hardcoded '~/.git-scripts/'?
 [alias]
   aliases = !git config --get-regexp '^alias\\.'
   # TODO: manage all worktrees within same vscode session for given project?
@@ -54,13 +54,10 @@
     git log --since=\"$since\" --until=\"$until\" --author=\"$(git config user.email)\" --pretty=format:'[%h]%ad : %s'; \
   }; f"
   mc = month-commit
-  pull-default = "!f() { \
-    git stash -u; \
-    default=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'); \
-    git pull origin $default; \
-    git stash pop; \
-  }; f"
-  pd = pull-default
+  rebase-default = "!~/.git-scripts/rebase-default.sh"
+  rd = rebase-default
+  log-to-default = "!~/.git-scripts/log-to-default.sh"
+  ld = log-to-default
 
 # git rev-parse --abbrev-ref HEAD
 
