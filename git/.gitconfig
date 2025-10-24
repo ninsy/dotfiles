@@ -58,6 +58,8 @@
   rd = rebase-default
   log-to-default = "!~/.git-scripts/log-to-default.sh"
   ld = log-to-default
+  default-branch = "!~/.git-scripts/default-branch.sh"
+  db = default-branch
 
 # git rev-parse --abbrev-ref HEAD
 

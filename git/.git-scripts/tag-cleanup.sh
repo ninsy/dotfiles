@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+# TODO: basically there is problem with stale/hanging rc tags laying arround...
