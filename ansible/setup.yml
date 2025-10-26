@@ -5,11 +5,11 @@
       apt:
         update_cache: true
       tags:
-        - zsh
+        # - zsh
         - node
-        - tmux
+        # - tmux
   tasks:
-    - include: tasks/zsh.yml
-    - include: tasks/node.yml
-    - include: tasks/tmux.yml
+    # - include_tasks: tasks/zsh.yml
+    - include_tasks: tasks/node.yml
+    # - include_tasks: tasks/tmux.yml
     
