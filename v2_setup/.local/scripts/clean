@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# TODO: basis for our cleaning stuff!
+
+# TODO: change path?
+# TODO: also, should probably handle 'tags' like runs script?
+find ~/Documents/Coding/js -name 'node_modules' -exec rm -rf '{}' +

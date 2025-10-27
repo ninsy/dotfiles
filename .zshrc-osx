@@ -222,6 +222,11 @@ TMP_FZF_GIP="/tmp/fzf-git.sh"
 #     return 2
 # fi
 
+# TODO: obly if exists?
+# if command -v ngrok &>/dev/null; then
+#     eval "$(ngrok completion)"
+# fi
+
 # k8s/kubectl section
 source <(kubectl completion zsh)  # set up autocomplete in zsh into the current shell
 echo '[[ $commands[kubectl] ]] && source <(kubectl completion zsh)' >> ~/.zshrc # add autocomplete permanently to your zsh shell

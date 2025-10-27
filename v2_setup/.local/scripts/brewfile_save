@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# TODO: correct path?
+brew bundle dump --file=$HOME/.config/brew/Brewfile`
+# TODO: show diff?
+# TODO: also option to git add and commit? thats the usual stuff I do after updating brewfile...

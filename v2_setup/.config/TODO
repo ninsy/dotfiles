@@ -1,0 +1,4 @@
+- all software used here should have install script in runs...
+- brew should also handle large part of it, if possible ofc.
+- for now i am fine that brew is here and handles 'single-OS' setup, but what if I want to get into linux too?
+- prune the Brewfile? Probably I dont need lot of stuff there anyway?

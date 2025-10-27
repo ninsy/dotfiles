@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+# TODO: what does it do? to be behind flag?
+sudo softwareupdate -i -a
+brew update --force
+brew upgrade
