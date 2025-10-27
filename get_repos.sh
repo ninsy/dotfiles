@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: into $HOME/.local/scripts
+
 REPO_LIST='~/.repos.txt'
 REPO_PATH='~/Documents/repos'
 

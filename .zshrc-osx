@@ -1,16 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
-#ZSH_THEME="dracula"
-
+# TODO!: into $HOME/.local/scripts 
 function loadenv() {
   # TODO: save pwd in some file, so that when you call unset_all in works in lifo manner
   if [ ! -f .env ]; then
@@ -21,6 +12,7 @@ function loadenv() {
 }
 alias le="loadenv"
 
+# TODO!: into $HOME/.local/scripts
 function unset_all() {
   if [ ! -f .env ]; then
     echo "No .env file in directory $(pwd), exiting..."
@@ -35,6 +27,8 @@ function tf_fmt() {
   find . -type f \( -name "*.tf" -or -name "*.tfvars" -and ! -path "./.terraform/*" \) -exec terraform fmt {} \;
 }
 
+# TODO: into... cleanup script? stuff that removes dangling docker images + git prune -v + node_modules on "stale" dirs
+# TODO: shall such cleanup script be based on list from '~/.repos.txt' ?
 function git_prune() {
   for n in `find $1 -name .git`
   do
@@ -43,10 +37,7 @@ function git_prune() {
   done
 }
 
-_exists() {
-  command -v $1 >/dev/null 2>&1
-}
-
+# TODO: into git-scripts
 commit_hash() {
   git rev-parse --short=10 HEAD
 }
@@ -65,12 +56,6 @@ function llamas_repos() {
   # TODO: topics passed as flags? org as arg?
   gh api --paginate "search/repositories?q=org:getndazn+topic:llamas+topic:katowice+archived:false&per_page=100" | jq '.items[] | { full_name, html_url, topics, default_branch }'
 }
-
-if _exists trash; then
-  alias rm='trash'
-else
-  alias rm='rm -i'
-fi
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -156,20 +141,19 @@ plugins=(
     zig-shell-completions
 )
 
+
 source $ZSH/oh-my-zsh.sh
+source $HOME/.zsh_aliases
+## Zplug init
+source $ZPLUG_HOME/init.zsh
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
 # fi
 
 # Compilation flags
@@ -183,35 +167,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-export PAGER=less
-
-export SCRIPTS_FILE=$HOME/.local/bin/zsh-scripts.sh
-source $SCRIPTS_FILE
-source $HOME/.zsh_aliases
-
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagacedw
-
-export PATH="$HOME":$PATH
-export PATH=$HOME/.local/bin:$PATH
-export PATH=/usr/local/bin:$PATH
-
-export PATH="$GOROOT/bin:$PATH"
-export PATH="$PATH:$GOPATH/bin"
-export PATH=/usr/local/bin:$PATH
-
-bindkey -s ^f "tmux-sessionizer\n"
-bindkey "^b" beginning-of-line
-
-# TODO: fix!
-bindkey "^[f" forward-word
-bindkey "^[b" backward-word
-
-## Zplug init
-export ZPLUG_HOME=/usr/local/opt/zplug
-source $ZPLUG_HOME/init.zsh
-
 # TODO: make sure that it is cloned only if not present!
 # git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
@@ -240,11 +195,6 @@ eval "$(mise activate zsh)"
 # git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
 # git clone https://github.com/fdellwing/zsh-bat.git $ZSH_CUSTOM/plugins/zsh-ba
-export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=10000000
-export SAVEHIST=10000000
-export HIST_STAMPS="yyyy-mm-dd"
-export HISTORY_IGNORE="(ls|cd|pwd|exit|cd)*"
 
 setopt EXTENDED_HISTORY      # Write the history file in the ':start:elapsed;command' format.
 setopt INC_APPEND_HISTORY    # Write to the history file immediately, not when the shell exits.
@@ -258,17 +208,11 @@ setopt APPEND_HISTORY        # append to history file (Default)
 setopt HIST_NO_STORE         # Don't store history commands
 setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line being added to the history.
 
-# TODO: separate file for envs?
-export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
-
 source <(fzf --zsh)
 # TODO: create it and add into dotfiles
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# ~~<TAB>
-export FZF_COMPLETION_TRIGGER='~~'
-export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
+# TODO: into $HOME/.local/scripts ?
 # TODO: dokoncz to...
 LAST_KNOWN_FZF_GIT_HASH="5002c0ec97b8bbfa0f87eaa3940db64f32235a0800606a28498230884adb4927"
 FZF_GIT_REMOTE="https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
@@ -278,14 +222,13 @@ TMP_FZF_GIP="/tmp/fzf-git.sh"
 #     return 2
 # fi
 
-export LC_ALL=en_US.UTF-8
-
 # k8s/kubectl section
 source <(kubectl completion zsh)  # set up autocomplete in zsh into the current shell
 echo '[[ $commands[kubectl] ]] && source <(kubectl completion zsh)' >> ~/.zshrc # add autocomplete permanently to your zsh shell
 
 eval "$(devtui completion zsh)"
 
+# TODO: backup that stuff into .local/scripts
 echo
 echo "Remember you've set 'SCRIPTS_FILE' that points to file with zsh scripts, edit it via \"code \$SCRIPTS_FILE\"".
 echo "Also at: \$HOME/.local/bin/tf-destroy.sh"

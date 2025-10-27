@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+# TODO! into $HOME/.local/scripts
+
 # TODO: split furhter - aws stuff, etc...
 
 _exists() {
@@ -47,6 +49,7 @@ function release_node_rc {
     return 1
   fi
 
+  # TODO: use arg for release_file, but default to beloow
   release_file="pre-release.yml"
   release_file_path=".github/workflows/$release_file"
   if [[ ! -f "$PWD/$release_file_path" ]]; then
@@ -111,7 +114,8 @@ function setup_npm {
         ;;
     esac
   done
-  
+
+  # TODO: when moving to separate bash script, just use 'set -e' so such manual check won't be needed... 
   if [ -z "$REGISTRY" ]; then
     echo "\$REGISTRY is not set. Please provide a command with -r option or set NPM_REGISTRY environment variable."
     exit 1
