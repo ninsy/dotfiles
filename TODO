@@ -1,4 +1,5 @@
 - run shellcheck on pre-commit?
 - commit rclone config but without possible token?... token as env var?
+- calling 'code' shouldnt create new instance of vsc, but open new project within new session
 
 - split this PR further?...
