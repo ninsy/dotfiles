@@ -8,12 +8,38 @@
     "settingsSync.ignoredExtensions": [
 
     ],
+    "vim.leader": " ",
+    "vim.normalModeKeyBindings": [
+        {
+            "before": ["<leader>", "a"],
+            "commands": ["vscode-harpoon.addEditor"]
+        },
+        {
+            "before": ["<leader>", "e"],
+            "commands": ["vscode-harpoon.editEditors"]
+        },
+        {
+            "before": ["<leader>", "p", "e"],
+            "commands": ["vscode-harpoon.editorQuickPick"]
+        },
+        {
+            "before": ["<leader>", "1"],
+            "commands": ["vscode-harpoon.gotoEditor1"]
+        },
+        {
+            "before": ["<leader>", "2"],
+            "commands": ["vscode-harpoon.gotoEditor2"]
+        },
+        {
+            "before": ["<leader>", "3"],
+            "commands": ["vscode-harpoon.gotoEditor3"]
+        }
+    ],
     "vim.smartRelativeLine": true,
     "vsicons.dontShowNewVersionMessage": true,
     "workbench.colorTheme": "Gruvbox Dark Hard",
     "workbench.iconTheme": "vscode-icons",
     "workbench.settings.openDefaultKeybindings": true,
-    "zig.initialSetupDone": true,
     "[python]": {
         "editor.formatOnType": true
     },
@@ -23,4 +49,5 @@
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
     },
+    "workbench.editor.empty.hint": "hidden",
 }
