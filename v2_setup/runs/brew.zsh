@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# TODO: to be handled by runs?
+# TODO: scripts into .local/scripts, Brewfile into .config/brew ?
+
 _exists() {
   command -v $1 >/dev/null 2>&1
 }

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# TODO: extend to work with git worktrees?
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$(find ~/Documents/repos ~Documents/playground -mindepth 1 -maxdepth 1 -type d | fzf)
+fi
+
+if [[ -z "$selected" ]]; then
+    exit 0
+fi
+
+selected_name=$(basename "$selected" | tr ":,.  " "____")
+tmux_running=$(pgrep tmux)
+
+switch_to () {
+    if [[ -z "$TMUX" ]]; then
+        tmux attach-session -t $selected_name
+    else
+    tmux switch-client -t $selected_name
+    fi
+}
+
+if tmux has-session -t=$selected_name 2> /dev/null; then
+    switch_to
+    exit 0
+fi
+
+# NOTE: prefix + L -> to previous session
+tmux new-session -ds $selected_name -c $selected
+switch_to
+# TODO: needed due to long start of zsh... start using .zprofile
+sleep 2
+tmux send-keys -t "$selected_name" "ready-tmux" ^M
+
+# TODO: similar stuff, but have "close-tmux" script?
+# tmux set-hook session-closed -t "$selected_name 'run "echo session closed >> ~/log.txt"'

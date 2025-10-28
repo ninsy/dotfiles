@@ -1,8 +1,9 @@
+# TODO: so, what is the purpose of such global mise.toml then?
+# https://mise.jdx.dev/configuration.html
 [tools]
-java = "openjdk-11.0.2"
-node = "22"
-terraform = "1.6.1"
+node = 'lts'
 
+# TODO: unused?
 [tasks."terraform:check"]
 description = "Checks the Terraform files"
 depends = ["terraform:format", "terraform:validate"]
